@@ -8,41 +8,41 @@ typedef struct
 } seed_struct;
 
 char ability_order[14][70] = {
-    "Ö÷Ê¡",
-    "¸±Ê¡",
-    "Ä«»Ø",
-    "×ßËÙ",
-    "ÓÎËÙ",
-    "´óÕĞ¼õÁ¿",
-    "spËÀÍö¼õÇá",
-    "´óÕĞÔöÇ¿",
-    "¿ìËÙ¸´»î",
-    "³¬¼¶Ìø",
-    "¸±Ç¿",
-    "°²È«Ğ¬",
-    "·À±¬",
-    "ĞĞ¶¯Ç¿»¯",
+    "ä¸»çœ",
+    "å‰¯çœ",
+    "å¢¨å›",
+    "èµ°é€Ÿ",
+    "æ¸¸é€Ÿ",
+    "å¤§æ‹›å‡é‡",
+    "spæ­»äº¡å‡è½»",
+    "å¤§æ‹›å¢å¼º",
+    "å¿«é€Ÿå¤æ´»",
+    "è¶…çº§è·³",
+    "å‰¯å¼º",
+    "å®‰å…¨é‹",
+    "é˜²çˆ†",
+    "è¡ŒåŠ¨å¼ºåŒ–",
 };
 char brand_name[20][70] = {
-    "Õ½¶·öÏÓã",
-    "¸ÖÌúÏÈ·æ",
-    "º£ÔÂ",
-    "ÂŞ¿Ï±´¸ñ",
-    "Ôó¿á",
-    "¶ÍÆ·",
-    "Å¯Á÷",
-    "·«Á¢",
-    "ËÂÃÅ",
-    "Ê±Óê",
-    "°¬ÂåÑÛ",
-    "Ï¾¹Å",
-    "ÎŞ·¨ÎŞÌì",
-    "öÏ»Ê",
-    "½£¼âöÏ",
-    "É¢ÊÙË¾",
-    "ÆßÂÖ",
-    "ĞÜÏÈÉúÉÌ»á",
-    "Óã¸ÉÖÆÔì",
+    "æˆ˜æ–—é±¿é±¼",
+    "é’¢é“å…ˆé”‹",
+    "æµ·æœˆ",
+    "ç½—è‚¯è´æ ¼",
+    "æ³½é…·",
+    "é”»å“",
+    "æš–æµ",
+    "å¸†ç«‹",
+    "å¯ºé—¨",
+    "æ—¶é›¨",
+    "è‰¾æ´›çœ¼",
+    "æš‡å¤",
+    "æ— æ³•æ— å¤©",
+    "é±¿çš‡",
+    "å‰‘å°–é±¿",
+    "æ•£å¯¿å¸",
+    "ä¸ƒè½®",
+    "ç†Šå…ˆç”Ÿå•†ä¼š",
+    "é±¼å¹²åˆ¶é€ ",
     "amiibo",
 };
 int brand_ability[20][2] = {
@@ -83,7 +83,7 @@ int printfb(unsigned int a)
     printf("%d\n", i);
 }
 
-// ¼ÆËãÏÂÒ»²½µÄÖÖ×Ó
+// è®¡ç®—ä¸‹ä¸€æ­¥çš„ç§å­
 unsigned int seed_advance(unsigned int seed)
 {
     seed ^= seed << 13;
@@ -92,7 +92,7 @@ unsigned int seed_advance(unsigned int seed)
     return seed;
 }
 
-//¼ÆËãµ±Ç°Æ·ÅÆÖÖ×Ó¶ÔÓ¦µÄ¼¼ÄÜ 28 = 2*14 35 = 12 * 2 + 1 + 10
+//è®¡ç®—å½“å‰å“ç‰Œç§å­å¯¹åº”çš„æŠ€èƒ½ 28 = 2*14 35 = 12 * 2 + 1 + 10
 int ability_solve(unsigned int seed, int brand)
 {
     int i;
@@ -121,7 +121,7 @@ int ability_solve(unsigned int seed, int brand)
     }
 }
 
-//¼ÆËãÓĞÒûÁÏµÄÇé¿öÏÂ£¬¶øÇÒÒûÁÏÃ»ÓĞÖĞµÄÇé¿öÏÂµÄ¼¼ÄÜ
+//è®¡ç®—æœ‰é¥®æ–™çš„æƒ…å†µä¸‹ï¼Œè€Œä¸”é¥®æ–™æ²¡æœ‰ä¸­çš„æƒ…å†µä¸‹çš„æŠ€èƒ½
 int ability_solve_dd(seed_struct seed, int drink)
 {
     int n, seed_, i;
@@ -155,7 +155,7 @@ int ability_solve_dd(seed_struct seed, int drink)
     }
 }
 
-//¼ÆËãÓĞÒûÁÏµÄÇé¿öÏÂµÄÖÖ×Ó¼ÆËã
+//è®¡ç®—æœ‰é¥®æ–™çš„æƒ…å†µä¸‹çš„ç§å­è®¡ç®—
 seed_struct ability_solve_drink(seed_struct seed, int drink)
 {
     int ability, seed_;
@@ -176,7 +176,7 @@ seed_struct ability_solve_drink(seed_struct seed, int drink)
     return seed;
 }
 
-//²éÕÒÏÂÒ»Î»ÖÖ×ÓÊÇ·ñ·ûºÏĞòÁĞÌõ¼ş
+//æŸ¥æ‰¾ä¸‹ä¸€ä½ç§å­æ˜¯å¦ç¬¦åˆåºåˆ—æ¡ä»¶
 int search_seed_one(seed_struct seed, int target, int drink)
 {
     int i = drink;
@@ -193,7 +193,7 @@ int search_seed_one(seed_struct seed, int target, int drink)
         }
     }
 }
-//ÔÚËùÓĞµÄÖÖ×ÓĞòÁĞÖĞÑ°ÕÒÄ¿±ê¼¼ÄÜĞòÁĞ
+//åœ¨æ‰€æœ‰çš„ç§å­åºåˆ—ä¸­å¯»æ‰¾ç›®æ ‡æŠ€èƒ½åºåˆ—
 int search_seed(seed_struct seed, int target1, int target2, int drink)
 {
     int i = drink;
@@ -220,7 +220,7 @@ int search_seed(seed_struct seed, int target1, int target2, int drink)
     }
 }
 
-//¼ÆËã»¨·Ñ¼¸ÕÅÒûÁÏÈ¯
+//è®¡ç®—èŠ±è´¹å‡ å¼ é¥®æ–™åˆ¸
 int cost_solve(int i, int two)
 {
     int cost = 0;
@@ -237,14 +237,14 @@ int cost_solve(int i, int two)
 }
 
 /*
-´ó¸ÅË¼Â·¾ÍÊÇÏÈÓÃÖÖ×ÓÑÜ»¯Ã»ÓĞÒûÁÏµÄÇé¿öÏÂÖÖ×ÓÑÜ»¯ĞòÁĞ
-´ÓĞòºÅ0¿ªÊ¼ÑÜ»¯£¬Ã¿ÑÜ»¯Ò»¸ö¾ÍÔÚÕâ¸öÖÖ×ÓµÄ»ù´¡ÉÏ£¬ºÈ13ÖÖ²»Í¬µÄÒûÁÏÑÜ»¯Èı¸ö½ÓÏÂÀ´µÄĞòÁĞ
-ÔÚÕâĞ©Ñİ»¯³öÀ´µÄ14¡Á3¸öÖÖ×ÓÀïÃæÑ°ÕÒÓëÄ¿±ê¼¼ÄÜµÚÒ»¸öÏàÍ¬µÄ¼¼ÄÜ
-Èç¹ûÕÒµ½£¬ÄÇ¾ÍÔÚÕâ¸öÖÖ×ÓµÄ»ù´¡ÉÏ¼ÌĞøÑ°ÕÒºÈËùÓĞÒûÁÏµÄ¿ÉÄÜĞÔÏÂµÄÏÂÒ»¸öÖÖ×ÓÓë¼¼ÄÜ
-Èç¹ûµÚ¶ş¸öµÚÈı¸ö¶¼ÓëÄ¿±êĞòÁĞÆ¥Åä
-Ôò´ú±íÕÒµ½Ä¿±êĞòÁĞ
-²¢ÇÒ¼ÆËãÊä³öÊä³ö´ËÊ±»¨·ÑµÄÒûÁÏÈ¯
-Ö®ºóÔ­Ê¼ĞòÁĞ¼ÌĞøÑÜ»¯£¬Í¬ÖÖ»¨·ÑµÄÒûÁÏÈ¯Ö»Êä³öÂ·Ïß×îÉÙµÄÇé¿ö
+å¤§æ¦‚æ€è·¯å°±æ˜¯å…ˆç”¨ç§å­è¡åŒ–æ²¡æœ‰é¥®æ–™çš„æƒ…å†µä¸‹ç§å­è¡åŒ–åºåˆ—
+ä»åºå·0å¼€å§‹è¡åŒ–ï¼Œæ¯è¡åŒ–ä¸€ä¸ªå°±åœ¨è¿™ä¸ªç§å­çš„åŸºç¡€ä¸Šï¼Œå–13ç§ä¸åŒçš„é¥®æ–™è¡åŒ–ä¸‰ä¸ªæ¥ä¸‹æ¥çš„åºåˆ—
+åœ¨è¿™äº›æ¼”åŒ–å‡ºæ¥çš„14Ã—3ä¸ªç§å­é‡Œé¢å¯»æ‰¾ä¸ç›®æ ‡æŠ€èƒ½ç¬¬ä¸€ä¸ªç›¸åŒçš„æŠ€èƒ½
+å¦‚æœæ‰¾åˆ°ï¼Œé‚£å°±åœ¨è¿™ä¸ªç§å­çš„åŸºç¡€ä¸Šç»§ç»­å¯»æ‰¾å–æ‰€æœ‰é¥®æ–™çš„å¯èƒ½æ€§ä¸‹çš„ä¸‹ä¸€ä¸ªç§å­ä¸æŠ€èƒ½
+å¦‚æœç¬¬äºŒä¸ªç¬¬ä¸‰ä¸ªéƒ½ä¸ç›®æ ‡åºåˆ—åŒ¹é…
+åˆ™ä»£è¡¨æ‰¾åˆ°ç›®æ ‡åºåˆ—
+å¹¶ä¸”è®¡ç®—è¾“å‡ºè¾“å‡ºæ­¤æ—¶èŠ±è´¹çš„é¥®æ–™åˆ¸
+ä¹‹ååŸå§‹åºåˆ—ç»§ç»­è¡åŒ–ï¼ŒåŒç§èŠ±è´¹çš„é¥®æ–™åˆ¸åªè¾“å‡ºè·¯çº¿æœ€å°‘çš„æƒ…å†µ
 */
 int main()
 {
@@ -255,13 +255,13 @@ int main()
     int target_code[3] = {3, 3, 3};
     seed_struct seed_begin, seed_ori, seed_brance;
 
-    //Ò»Ğ©ÊäÈë³ÌĞò
-    printf("»¶Ó­Ê¹ÓÃsplatoon×°±¸¸¨Öú³ÌĞò\n´Ë³ÌĞòÓÉ±¾ÈËÒ»ÈËÍê³É,Ñ§ÒÕ²»¾«,ÓĞbugÊµÊôÕı³£,ÇëÄú¼ûÁÂ\nÒ²ÇëÄúÊ¹ÓÃÉú³ÉµÄ·½°¸Ö®Ç°ÑéÖ¤Ò»ÏÂ\n");
-    printf("±¾³ÌĞòÓÉÏûºÄÒûÁÏÈ¯´Ó¶àµ½ÉÙÅÅĞò£¬Ã¿ÖÖÏûºÄµÄÒûÁÏÈ¯Ö»»áÉú³ÉÒ»ÖÖ½á¹û\n");
-    printf("ÈçÓĞÎÊÌâÇë·´À¡¸øÎÒ\nQQ:1464243589\nBÕ¾ID:ÒªÀúÁ·µÄ·ç\n");
-    printf("ÇëÊäÈëµ±Ç°×°±¸ÖÖ×Ó(Àı×Ó:0x915cfc31):\n");
+    //Ò»Ğ©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    printf("æ¬¢è¿ä½¿ç”¨splatoonè£…å¤‡è¾…åŠ©ç¨‹åº\næ­¤ç¨‹åºç”±æœ¬äººä¸€äººå®Œæˆ,å­¦è‰ºä¸ç²¾,æœ‰bugå®å±æ­£å¸¸,è¯·æ‚¨è§è°…\nä¹Ÿè¯·æ‚¨ä½¿ç”¨ç”Ÿæˆçš„æ–¹æ¡ˆä¹‹å‰éªŒè¯ä¸€ä¸‹\n");
+    printf("æœ¬ç¨‹åºç”±æ¶ˆè€—é¥®æ–™åˆ¸ä»å¤šåˆ°å°‘æ’åºï¼Œæ¯ç§æ¶ˆè€—çš„é¥®æ–™åˆ¸åªä¼šç”Ÿæˆä¸€ç§ç»“æœ\n");
+    printf("å¦‚æœ‰é—®é¢˜è¯·åé¦ˆç»™æˆ‘\nQQ:1464243589\nBç«™ID:è¦å†ç»ƒçš„é£\n");
+    printf("è¯·è¾“å…¥å½“å‰è£…å¤‡ç§å­(ä¾‹å­:0x915cfc31):\n");
     scanf("%x", &seed_begin.seed);
-    printf("Çë°´ÕÕÏÂÃæµÄ×°±¸Æ·ÅÆ±àºÅ£¬ÊäÈëµ±Ç°×°±¸Æ·ÅÆ±àºÅ£º\n");
+    printf("è¯·æŒ‰ç…§ä¸‹é¢çš„è£…å¤‡å“ç‰Œç¼–å·ï¼Œè¾“å…¥å½“å‰è£…å¤‡å“ç‰Œç¼–å·ï¼š\n");
     for (i = 0; i < 20; i++)
     {
         printf("%d : %s\n", i, brand_name[i]);
@@ -270,17 +270,17 @@ int main()
     while (1)
     {
         int res_cost = 4;
-        printf("Çë°´ÕÕÏÂÃæµÄ¼¼ÄÜ±àºÅ£¬ÊäÈëÈı¸öÄ¿±ê¼¼ÄÜĞòÁĞ(Àı:0 0 0)\n");
-        printf("Èç¹ûÖ»ĞèÒªÁ½¸ö¼¼ÄÜ,Òª×Ô¼º´ò¿×£¬×îºóÒ»¸öÎ»ÖÃÌî-1(Àı:1 2 -1)\n");
-        printf("Èç¹û²»ÖªµÀË¢Ê²Ã´¼¼ÄÜÇëÊäÈë-1 -1 -1 ²é¿´Ë¢ËùÓĞ¼¼ÄÜµÄÏûºÄ\n");
-        printf("Èı¸öÊıÖ®¼äÇëÓÃ¿Õ¸ñ¸ô¿ª\n");
+        printf("è¯·æŒ‰ç…§ä¸‹é¢çš„æŠ€èƒ½ç¼–å·ï¼Œè¾“å…¥ä¸‰ä¸ªç›®æ ‡æŠ€èƒ½åºåˆ—(ä¾‹:0 0 0)\n");
+        printf("å¦‚æœåªéœ€è¦ä¸¤ä¸ªæŠ€èƒ½,è¦è‡ªå·±æ‰“å­”ï¼Œæœ€åä¸€ä¸ªä½ç½®å¡«-1(ä¾‹:1 2 -1)\n");
+        printf("å¦‚æœä¸çŸ¥é“åˆ·ä»€ä¹ˆæŠ€èƒ½è¯·è¾“å…¥-1 -1 -1 æŸ¥çœ‹åˆ·æ‰€æœ‰æŠ€èƒ½çš„æ¶ˆè€—\n");
+        printf("ä¸‰ä¸ªæ•°ä¹‹é—´è¯·ç”¨ç©ºæ ¼éš”å¼€\n");
         for (i = 0; i < 14; i++)
         {
             printf("%d : %s\n", i, ability_order[i]);
         }
 
-        //Õâ¾ÍÊÇÄ¿±êĞòÁĞ
-        // target_loop_numµÄ×÷ÓÃÊÇÔÚÑ°ÕÒÈ«¼¼ÄÜÂ·ÏßÊ±±êÖ¾Ñ°ÕÒµ½ÄÄ¸ö¼¼ÄÜµÄÊı×Ö
+        //è¿™å°±æ˜¯ç›®æ ‡åºåˆ—
+        // target_loop_numçš„ä½œç”¨æ˜¯åœ¨å¯»æ‰¾å…¨æŠ€èƒ½è·¯çº¿æ—¶æ ‡å¿—å¯»æ‰¾åˆ°å“ªä¸ªæŠ€èƒ½çš„æ•°å­—
         scanf("%d %d %d", &target_code[0], &target_code[1], &target_code[2]);
         int target_loop_num = -1;
         if (target_code[0] == -1)
@@ -295,7 +295,7 @@ int main()
         int max_num = target_num * 2;
         seed_ori = seed_begin;
         seed_struct seed_res[max_num];
-        //ÕâÊÇÑ°ÕÒËùÓĞ¼¼ÄÜ¿ÉÄÜĞÔµÄ³ÌĞò£¬·Ö±ğ½«Ä¿±êĞòÁĞÉèÖÃ³ÉËùÓĞ¼¼ÄÜµÄ0.3Óë0.2½øĞĞÔËĞĞ³ÌĞò
+         //è¿™æ˜¯å¯»æ‰¾æ‰€æœ‰æŠ€èƒ½å¯èƒ½æ€§çš„ç¨‹åºï¼Œåˆ†åˆ«å°†ç›®æ ‡åºåˆ—è®¾ç½®æˆæ‰€æœ‰æŠ€èƒ½çš„0.3ä¸0.2è¿›è¡Œè¿è¡Œç¨‹åº
         if (target_loop_num != -1)
         {
             int find = 0;
@@ -321,7 +321,7 @@ int main()
                             seed_brance = seed_ori;
                             for (ii = -1; ii < jj; ii++)
                             {
-                                seed_brance = ability_solve_drink(seed_brance, i); //ÔÚºÈÒûÁÏµÄÇé¿öÏÂ½øĞĞÖÖ×ÓÑÜ»¯
+                                seed_brance = ability_solve_drink(seed_brance, i); //ï¿½Úºï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½Â½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü»ï¿½
                             }
                             if (seed_brance.ability == target_code[0])
                             {
@@ -358,7 +358,7 @@ int main()
                                     }
                                     if (target_loop_num < 14)
                                     {
-                                        printf("%d: <%s> 0.3×îÉÙĞèÒªË¢ %d ¸ö¼¼ÄÜ£¬ĞèÒª %d ÕÅÒûÁÏÈ¯ ·Ö±ğÊÇ \\", target_loop_num, ability_order[target_loop_num], j + jj + 3, drink_num);
+                                        printf("%d: <%s> 0.3æœ€å°‘éœ€è¦åˆ· %d ä¸ªæŠ€èƒ½ï¼Œéœ€è¦ %d å¼ é¥®æ–™åˆ¸ åˆ†åˆ«æ˜¯ \\", target_loop_num, ability_order[target_loop_num], j + jj + 3, drink_num);
                                         for (ii = 0; ii < drink_num; ii++)
                                         {
                                             printf("%s\\", ability_order[drink_all[ii]]);
@@ -369,7 +369,7 @@ int main()
                                     }
                                     if (target_loop_num > 13)
                                     {
-                                        printf("%d: <%s> 0.2×îÉÙĞèÒªË¢ %d ¸ö¼¼ÄÜ£¬ĞèÒª %d ÕÅÒûÁÏÈ¯ ·Ö±ğÊÇ \\", target_loop_num - 14, ability_order[target_loop_num - 14], j + jj + 2, drink_num);
+                                        printf("%d: <%s> 0.2æœ€å°‘éœ€è¦åˆ· %d ä¸ªæŠ€èƒ½ï¼Œéœ€è¦ %d å¼ é¥®æ–™åˆ¸ åˆ†åˆ«æ˜¯ \\", target_loop_num - 14, ability_order[target_loop_num - 14], j + jj + 2, drink_num);
                                         for (ii = 0; ii < drink_num; ii++)
                                         {
                                             printf("%s\\", ability_order[drink_all[ii]]);
@@ -404,27 +404,27 @@ int main()
             }
         }
 
-        //ÕâÊÇÑ°ÕÒÌØ¶¨µÄÄ¿±êĞòÁĞµÄ³ÌĞò
+        //è¿™æ˜¯å¯»æ‰¾ç‰¹å®šçš„ç›®æ ‡åºåˆ—çš„ç¨‹åº
         for (j = 0; j < max_num - 5; j++)
         {
-            //¶ÔÃ¿Ò»¸öÔ­Ê¼ÖÖ×ÓĞòÁĞ¶¼ÒªÑÜ»¯Ê®ËÄ´Î½ÓÏÂÀ´µÄ¿ÉÄÜĞÔ£¬·Ö±ğÑÜ»¯Èı´Î£¬Ñ°ÕÒÊÇ·ñ°üº¬Ä¿±êĞòÁĞ
+            //å¯¹æ¯ä¸€ä¸ªåŸå§‹ç§å­åºåˆ—éƒ½è¦è¡åŒ–åå››æ¬¡æ¥ä¸‹æ¥çš„å¯èƒ½æ€§ï¼Œåˆ†åˆ«è¡åŒ–ä¸‰æ¬¡ï¼Œå¯»æ‰¾æ˜¯å¦åŒ…å«ç›®æ ‡åºåˆ—
             for (jj = 0; jj < 3; jj++)
             {
                 for (i = 14; i > -1; i--)
                 {
-                    seed_brance = seed_ori; //½øÈëÖ§ÂöÑ°ÕÒ
+                    seed_brance = seed_ori; //è¿›å…¥æ”¯è„‰å¯»æ‰¾
                     for (ii = -1; ii < jj; ii++)
                     {
-                        seed_brance = ability_solve_drink(seed_brance, i); //ÔÚºÈÒûÁÏµÄÇé¿öÏÂ½øĞĞÖÖ×ÓÑÜ»¯
-                        seed_res[j + ii + 1] = seed_brance;                //¼ÇÂ¼¿ÉÄÜµÄÂ·Ïß
+                        seed_brance = ability_solve_drink(seed_brance, i); //åœ¨å–é¥®æ–™çš„æƒ…å†µä¸‹è¿›è¡Œç§å­è¡åŒ–
+                        seed_res[j + ii + 1] = seed_brance;                //è®°å½•å¯èƒ½çš„è·¯çº¿
                     }
                     if (seed_brance.ability == target_code[0])
-                    {                                                                           //Æ¥ÅäÁËÄ¿±êĞòÁĞµÄµÚÒ»¸ö¼¼ÄÜ
-                        two_step = search_seed(seed_brance, target_code[1], target_code[2], i); //Ñ°ÕÒºóÁ½¸ö¼¼ÄÜÊÇ·ñÆ¥Åä
+                    {                                                                           //åŒ¹é…äº†ç›®æ ‡åºåˆ—çš„ç¬¬ä¸€ä¸ªæŠ€èƒ½
+                        two_step = search_seed(seed_brance, target_code[1], target_code[2], i); //å¯»æ‰¾åä¸¤ä¸ªæŠ€èƒ½æ˜¯å¦åŒ¹é…
                         if (two_step != -2 || ((two_step / 100 == two_step % 100) && (two_step / 100 == i)))
                         {
-                            cost = cost_solve(i, two_step); //¼ÆËã·½°¸»¨·ÑÒûÁÏÊıÁ¿
-                            if (res_cost <= cost)           //ÅĞ¶Ï´ËÊ±»¨·ÑµÄÒûÁÏÊıÁ¿ÊÇ·ñÉÙÓÚÖ®Ç°µÄ·½°¸£¬Èç¹û²»ÉÙÓÚ£¬Ôò¶ªÆú
+                            cost = cost_solve(i, two_step); //è®¡ç®—æ–¹æ¡ˆèŠ±è´¹é¥®æ–™æ•°é‡
+                            if (res_cost <= cost)           //åˆ¤æ–­æ­¤æ—¶èŠ±è´¹çš„é¥®æ–™æ•°é‡æ˜¯å¦å°‘äºä¹‹å‰çš„æ–¹æ¡ˆï¼Œå¦‚æœä¸å°‘äºï¼Œåˆ™ä¸¢å¼ƒ
                             {
                                 continue;
                             }
@@ -432,43 +432,43 @@ int main()
                             seed_res[j + jj + 2] = ability_solve_drink(seed_res[j + jj + 1], two_step % 100);
                             if (res_cost == 4)
                             {
-                                printf("ÕâÊÇ  <<×î¿ì>>  µÄ·½°¸£¬ĞèÒªÏûºÄ %d ÕÅÒûÁÏÈ¯\n", cost);
+                                printf("è¿™æ˜¯  <<æœ€å¿«>>  çš„æ–¹æ¡ˆï¼Œéœ€è¦æ¶ˆè€— %d å¼ é¥®æ–™åˆ¸\n", cost);
                             }
                             else
                             {
-                                printf("´Ë·½°¸ĞèÒªÏûºÄ %d ÕÅÒûÁÏÈ¯\n", cost);
+                                printf("æ­¤æ–¹æ¡ˆéœ€è¦æ¶ˆè€— %d å¼ é¥®æ–™åˆ¸\n", cost);
                             }
                             res_cost = cost;
                             for (ii = 0; ii < j; ii++)
                             {
-                                printf("  µÚ %d ¸ö¼¼ÄÜ²úÉú %s   ´ËÊ±µÄÖÖ×ÓÎª  0x%x\n", ii + 1, ability_order[seed_res[ii].ability], seed_res[ii].seed);
+                                printf("  ç¬¬ %d ä¸ªæŠ€èƒ½äº§ç”Ÿ %s   æ­¤æ—¶çš„ç§å­ä¸º  0x%x\n", ii + 1, ability_order[seed_res[ii].ability], seed_res[ii].seed);
                             }
                             if (i != 14)
-                                printf("<<<ºÈ %s ÒûÁÏ>>>\n", ability_order[i]);
+                                printf("<<<å– %s é¥®æ–™>>>\n", ability_order[i]);
                             for (ii = 0; ii < jj; ii++)
                             {
-                                printf("  µÚ %d ¸ö¼¼ÄÜ²úÉú %s   ´ËÊ±µÄÖÖ×ÓÎª  0x%x\n", j + ii + 1, ability_order[seed_res[j + ii].ability], seed_res[j + ii].seed);
+                                printf("  ç¬¬ %d ä¸ªæŠ€èƒ½äº§ç”Ÿ %s   æ­¤æ—¶çš„ç§å­ä¸º  0x%x\n", j + ii + 1, ability_order[seed_res[j + ii].ability], seed_res[j + ii].seed);
                             }
-                            printf("<<0.3µÄÏ´ÒÂ·ş>> <<0.2µÄ°´Ğè´ò¿×>> £¬½ÓÏÂÀ´µÄ¼¼ÄÜ¾ÍÊÇÄ¿±êĞòÁĞ\n");
-                            printf("  µÚ %d ¸ö¼¼ÄÜ²úÉú %s   ´ËÊ±µÄÖÖ×ÓÎª  0x%x\n", j + jj + 1, ability_order[seed_res[j + jj].ability], seed_res[j + ii].seed);
+                            printf("<<0.3çš„æ´—è¡£æœ>> <<0.2çš„æŒ‰éœ€æ‰“å­”>> ï¼Œæ¥ä¸‹æ¥çš„æŠ€èƒ½å°±æ˜¯ç›®æ ‡åºåˆ—\n");
+                            printf("  ç¬¬ %d ä¸ªæŠ€èƒ½äº§ç”Ÿ %s   æ­¤æ—¶çš„ç§å­ä¸º  0x%x\n", j + jj + 1, ability_order[seed_res[j + jj].ability], seed_res[j + ii].seed);
                             if (two_step / 100 != i)
                             {
                                 if (two_step / 100 == 14)
-                                    printf("<<<È¡Ïû>>>ÒûÁÏĞ§¹û\n");
+                                    printf("<<<å–æ¶ˆ>>>é¥®æ–™æ•ˆæœ\n");
                                 else
-                                    printf("<<<ºÈ %s ÒûÁÏ>>>\n", ability_order[two_step / 100]);
+                                    printf("<<<å– %s é¥®æ–™>>>\n", ability_order[two_step / 100]);
                             }
-                            printf("  µÚ %d ¸ö¼¼ÄÜ²úÉú %s   ´ËÊ±µÄÖÖ×ÓÎª  0x%x\n", j + jj + 2, ability_order[seed_res[j + jj + 1].ability], seed_res[j + jj + 1].seed);
+                            printf("  ç¬¬ %d ä¸ªæŠ€èƒ½äº§ç”Ÿ %s   æ­¤æ—¶çš„ç§å­ä¸º  0x%x\n", j + jj + 2, ability_order[seed_res[j + jj + 1].ability], seed_res[j + jj + 1].seed);
                             if (target_code[2] != -1)
                             {
                                 if (two_step % 100 != two_step / 100)
                                 {
                                     if (two_step % 100 == 14)
-                                        printf("<<<È¡Ïû>>>ÒûÁÏĞ§¹û\n");
+                                        printf("<<<å–æ¶ˆ>>>é¥®æ–™æ•ˆæœ\n");
                                     else
-                                        printf("<<<ºÈ %s ÒûÁÏ>>>\n", ability_order[two_step % 100]);
+                                        printf("<<<å– %s é¥®æ–™>>>\n", ability_order[two_step % 100]);
                                 }
-                                printf("  µÚ %d ¸ö¼¼ÄÜ²úÉú %s   ´ËÊ±µÄÖÖ×ÓÎª  0x%x\n", j + jj + 3, ability_order[seed_res[j + ii + 2].ability], seed_res[j + jj + 2].seed);
+                                printf("  ç¬¬ %d ä¸ªæŠ€èƒ½äº§ç”Ÿ %s   æ­¤æ—¶çš„ç§å­ä¸º  0x%x\n", j + jj + 3, ability_order[seed_res[j + ii + 2].ability], seed_res[j + jj + 2].seed);
                             }
                             printf("\n\n\n");
                         }
@@ -481,7 +481,7 @@ int main()
         }
         if (res_cost == 4)
         {
-            printf("Sorry,ÕÒ²»µ½Ä¿±ê×éºÏ");
+            printf("Sorry,ï¿½Ò²ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½");
         }
     }
 }
