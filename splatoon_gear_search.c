@@ -1,87 +1,5 @@
 #include <stdio.h>
-
-typedef struct
-{
-    unsigned int seed;
-    int brand;
-    int ability;
-} seed_struct;
-
-char ability_order[14][70] = {
-    "主省",
-    "副省",
-    "墨回",
-    "走速",
-    "游速",
-    "大招减量",
-    "sp死亡减轻",
-    "大招增强",
-    "快速复活",
-    "超级跳",
-    "副强",
-    "安全鞋",
-    "防爆",
-    "行动强化",
-};
-char brand_name[20][70] = {
-    "战斗鱿鱼",
-    "钢铁先锋",
-    "海月",
-    "罗肯贝格",
-    "泽酷",
-    "锻品",
-    "暖流",
-    "帆立",
-    "寺门",
-    "时雨",
-    "艾洛眼",
-    "暇古",
-    "无法无天",
-    "鱿皇",
-    "剑尖鱿",
-    "散寿司",
-    "七轮",
-    "熊先生商会",
-    "鱼干制造",
-    "amiibo",
-};
-int brand_ability[20][2] = {
-    {11, 0},
-    {9, 8},
-    {4, 12},
-    {3, 4},
-    {6, 5},
-    {7, 1},
-    {1, 2},
-    {8, 6},
-    {0, 3},
-    {12, 13},
-    {2, 9},
-    {5, 7},
-    {1, 6},
-    {10, 11},
-    {0, 10},
-    {13, 10},
-    {13, 5},
-    {-1, -1},
-    {-1, -1},
-    {-1, -1},
-};
-
-int printfb(unsigned int a)
-{
-    int i = 0;
-    while (1)
-    {
-        printf("%d", a % 2);
-        i++;
-        a = a / 2;
-        if (a == 0)
-            break;
-    }
-    printf("\n");
-    printf("%d\n", i);
-}
+#include "utils.h"
 
 // 计算下一步的种子
 unsigned int seed_advance(unsigned int seed)
@@ -119,10 +37,12 @@ int ability_solve(unsigned int seed, int brand)
         if (seed_ < 0)
             return i;
     }
+    printf("Error: should not achieve here: %s:%d\n", __FILE__, __LINE__);
+    return -1;
 }
 
 //计算有饮料的情况下，而且饮料没有中的情况下的技能
-int ability_solve_dd(seed_struct seed, int drink)
+int ability_solve_dd(gear_t seed, int drink)
 {
     int n, seed_, i;
     if (brand_ability[seed.brand][0] == -1)
@@ -153,10 +73,12 @@ int ability_solve_dd(seed_struct seed, int drink)
         if (seed_ < 0)
             return i;
     }
+    printf("Error: should not achieve here: %s:%d\n", __FILE__, __LINE__);
+    return -1;
 }
 
 //计算有饮料的情况下的种子计算
-seed_struct ability_solve_drink(seed_struct seed, int drink)
+gear_t ability_solve_drink(gear_t seed, int drink)
 {
     int ability, seed_;
     seed.seed = seed_advance(seed.seed);
@@ -177,10 +99,10 @@ seed_struct ability_solve_drink(seed_struct seed, int drink)
 }
 
 //查找下一位种子是否符合序列条件
-int search_seed_one(seed_struct seed, int target, int drink)
+int search_seed_one(gear_t seed, int target, int drink)
 {
     int i = drink;
-    seed_struct seed_next;
+    gear_t seed_next;
     while (1)
     {
         seed_next = ability_solve_drink(seed, i);
@@ -194,12 +116,12 @@ int search_seed_one(seed_struct seed, int target, int drink)
     }
 }
 //在所有的种子序列中寻找目标技能序列
-int search_seed(seed_struct seed, int target1, int target2, int drink)
+int search_seed(gear_t seed, int target1, int target2, int drink)
 {
     int i = drink;
     int j;
     int k[2] = {0, 0};
-    seed_struct seed_next;
+    gear_t seed_next;
     while (1)
     {
         seed_next = ability_solve_drink(seed, i);
@@ -253,7 +175,7 @@ int main()
     int cost;
 
     int target_code[3] = {3, 3, 3};
-    seed_struct seed_begin, seed_ori, seed_brance;
+    gear_t seed_begin, seed_ori, seed_brance;
 
     //һЩ�������
     printf("欢迎使用splatoon装备辅助程序\n此程序由本人一人完成,学艺不精,有bug实属正常,请您见谅\n也请您使用生成的方案之前验证一下\n");
@@ -294,7 +216,7 @@ int main()
         int target_num = 15;
         int max_num = target_num * 2;
         seed_ori = seed_begin;
-        seed_struct seed_res[max_num];
+        gear_t seed_res[max_num];
          //这是寻找所有技能可能性的程序，分别将目标序列设置成所有技能的0.3与0.2进行运行程序
         if (target_loop_num != -1)
         {
