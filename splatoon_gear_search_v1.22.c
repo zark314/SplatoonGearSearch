@@ -236,7 +236,16 @@ int cost_solve(int i, int two)
     return cost;
 }
 
-//大概思路就是先用种子衍化没有饮料的情况下种子衍化序列，从序号0开始衍化，每衍化一个就在这个种子的基础上，喝13种不同的饮料衍化三个，演化出来的
+/*
+大概思路就是先用种子衍化没有饮料的情况下种子衍化序列
+从序号0开始衍化，每衍化一个就在这个种子的基础上，喝13种不同的饮料衍化三个接下来的序列
+在这些演化出来的14×3个种子里面寻找与目标技能第一个相同的技能
+如果找到，那就在这个种子的基础上继续寻找喝所有饮料的可能性下的下一个种子与技能
+如果第二个第三个都与目标序列匹配
+则代表找到目标序列
+并且计算输出输出此时花费的饮料券
+之后原始序列继续衍化，同种花费的饮料券只输出路线最少的情况
+*/
 int main()
 {
     int i, j, k, ii, jj, kk;
@@ -245,6 +254,8 @@ int main()
     int res_cost = 4;
     int target_code[3] = {3, 3, 3};
     seed_struct seed_begin, seed_ori, seed_brance;
+
+    //一些输入程序
     printf("欢迎使用splatoon装备辅助程序\n此程序由本人一人完成,学艺不精,有bug实属正常,请您见谅\n也请您使用生成的方案之前验证一下\n");
     printf("本程序由消耗饮料券从多到少排序，每种消耗的饮料券只会生成一种结果\n");
     printf("如有问题请反馈给我\nQQ:1464243589\nB站ID:要历练的风\n");
@@ -264,6 +275,9 @@ int main()
     {
         printf("%d : %s\n", i, ability_order[i]);
     }
+
+    //这就是目标序列
+    // target_loop_num的作用是在寻找全技能路线时标志寻找到哪个技能的数字
     scanf("%d %d %d", &target_code[0], &target_code[1], &target_code[2]);
     int target_loop_num = -1;
     if (target_code[0] == -1)
@@ -278,6 +292,7 @@ int main()
     int max_num = target_num * 2;
     seed_ori = seed_begin;
     seed_struct seed_res[max_num];
+    //这是寻找所有技能可能性的程序，分别将目标序列设置成所有技能的0.3与0.2进行运行程序
     if (target_loop_num != -1)
     {
         int find = 0;
@@ -292,15 +307,19 @@ int main()
             {
                 if (find != 0)
                     break;
-                for (i = 14; i > -1; i--)
+                for (jj = 0; jj < 3; jj++)
                 {
                     if (find != 0)
                         break;
-                    seed_brance = seed_ori;
-                    for (jj = 0; jj < 3; jj++)
+                    for (i = 14; i > -1; i--)
                     {
-                        seed_brance = ability_solve_drink(seed_brance, i);
-                        seed_res[j + jj] = seed_brance;
+                        if (find != 0)
+                            break;
+                        seed_brance = seed_ori;
+                        for (ii = -1; ii < jj; ii++)
+                        {
+                            seed_brance = ability_solve_drink(seed_brance, i); //在喝饮料的情况下进行种子衍化
+                        }
                         if (seed_brance.ability == target_code[0])
                         {
                             two_step = search_seed(seed_brance, target_code[1], target_code[2], i);
@@ -381,22 +400,28 @@ int main()
             }
         }
     }
+
+    //这是寻找特定的目标序列的程序
     for (j = 0; j < max_num - 5; j++)
     {
-        for (i = 14; i > -1; i--)
+        //对每一个原始种子序列都要衍化十四次接下来的可能性，分别衍化三次，寻找是否包含目标序列
+        for (jj = 0; jj < 3; jj++)
         {
-            seed_brance = seed_ori;
-            for (jj = 0; jj < 3; jj++)
+            for (i = 14; i > -1; i--)
             {
-                seed_brance = ability_solve_drink(seed_brance, i);
-                seed_res[j + jj] = seed_brance;
-                if (seed_brance.ability == target_code[0])
+                seed_brance = seed_ori; //进入支脉寻找
+                for (ii = -1; ii < jj; ii++)
                 {
-                    two_step = search_seed(seed_brance, target_code[1], target_code[2], i);
+                    seed_brance = ability_solve_drink(seed_brance, i); //在喝饮料的情况下进行种子衍化
+                    seed_res[j + ii + 1] = seed_brance;                //记录可能的路线
+                }
+                if (seed_brance.ability == target_code[0])
+                {                                                                           //匹配了目标序列的第一个技能
+                    two_step = search_seed(seed_brance, target_code[1], target_code[2], i); //寻找后两个技能是否匹配
                     if (two_step != -2 || ((two_step / 100 == two_step % 100) && (two_step / 100 == i)))
                     {
-                        cost = cost_solve(i, two_step);
-                        if (res_cost <= cost)
+                        cost = cost_solve(i, two_step); //计算方案花费饮料数量
+                        if (res_cost <= cost)           //判断此时花费的饮料数量是否少于之前的方案，如果不少于，则丢弃
                         {
                             continue;
                         }
@@ -447,6 +472,7 @@ int main()
                 }
             }
         }
+        // printf("0x%x \n", seed_ori.seed);
         seed_ori = ability_solve_drink(seed_ori, -1);
         seed_res[j] = seed_ori;
     }
