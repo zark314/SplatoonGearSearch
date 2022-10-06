@@ -1,409 +1,313 @@
 #include <stdio.h>
+#include <stdlib.h>
+
 #include "utils.h"
 
-// 计算下一步的种子
-unsigned int seed_advance(unsigned int seed)
-{
-    seed ^= seed << 13;
-    seed ^= seed >> 17;
-    seed ^= seed << 5;
-    return seed;
-}
+int main() {
+    ability_t targets[3] = {3, 3, 3};
+    gear_t init_gear = {0, 0, 0};
 
-//计算当前品牌种子对应的技能 28 = 2*14 35 = 12 * 2 + 1 + 10
-int ability_solve(unsigned int seed, int brand)
-{
-    int i;
-    int seed_;
-    if (brand > 16 || brand < 0)
-    {
-        seed_ = seed % 28;
-        for (i = 0; i < 14; i++)
-        {
-            seed_ = seed_ - 2;
-            if (seed_ < 0)
-                return i;
-        }
-    }
-    seed_ = seed % 35;
-    for (i = 0; i < 14; i++)
-    {
-        if (i == brand_ability[brand][0])
-            seed_ = seed_ - 10;
-        else if (i == brand_ability[brand][1])
-            seed_ = seed_ - 1;
-        else
-            seed_ = seed_ - 2;
-        if (seed_ < 0)
-            return i;
-    }
-    printf("Error: should not achieve here: %s:%d\n", __FILE__, __LINE__);
-    return -1;
-}
+    print_const_message1();
+    scanf("%x", &init_gear.seed);
+    print_const_message2();
+    scanf("%d", &init_gear.brand);
 
-//计算有饮料的情况下，而且饮料没有中的情况下的技能
-int ability_solve_dd(gear_t seed, int drink)
-{
-    int n, seed_, i;
-    if (brand_ability[seed.brand][0] == -1)
-    {
-        n = 26;
-    }
-    else if (brand_ability[seed.brand][0] == drink)
-    {
-        n = 25;
-    }
-    else if (brand_ability[seed.brand][1] == drink)
-    {
-        n = 34;
-    }
-    else
-        n = 33;
-    seed_ = seed.seed % n;
-    for (i = 0; i < 14; i++)
-    {
-        if (i == drink)
+    while (1) {
+        print_const_message3();
+        scanf("%d %d %d", &targets[0], &targets[1], &targets[2]);
+
+        if (valid_targets(targets) == FALSE) {
             continue;
-        if (i == brand_ability[seed.brand][0])
-            seed_ = seed_ - 10;
-        else if (i == brand_ability[seed.brand][1])
-            seed_ = seed_ - 1;
-        else
-            seed_ = seed_ - 2;
-        if (seed_ < 0)
-            return i;
+        }
+
+        if (targets[0] == -1) {
+            // 0.3
+            for (ability_t i = 0; i < NUM_ABILITY; i++) {
+                targets[0] = i;
+                targets[1] = i;
+                targets[2] = i;
+                printf("%d: <%s> ", i, ability_order[i]);
+                find_sol(init_gear, targets, FALSE);
+            }
+            printf("\n\n");
+            // 0.2
+            for (ability_t i = 0; i < NUM_ABILITY; i++) {
+                targets[0] = i;
+                targets[1] = i;
+                targets[2] = -1;
+                printf("%d: <%s> ", i, ability_order[i]);
+                find_sol(init_gear, targets, FALSE);
+            }
+            continue;
+        }
+
+        find_sol(init_gear, targets, TRUE);
     }
-    printf("Error: should not achieve here: %s:%d\n", __FILE__, __LINE__);
+
+    return 0;
+}
+
+void find_sol(gear_t init_gear_bkp, ability_t* targets, int is_full_search) {
+    gear_t init_gear = init_gear_bkp;
+    int res_cost = 4, cost;
+    for (int init_gear_iter = 0; init_gear_iter < MAX_ITER; init_gear_iter++) {
+        for (int cnt = 0; cnt < 3; cnt++) {
+            for (drink_t drink = 14; drink >= 0; drink--) {
+                gear_t gear = init_gear;
+                for (int i = 0; i <= cnt; i++) { gear = get_next_gear_using_drink(&gear, drink); }
+
+                if (gear.ability != targets[0]) { continue; }
+                int combined_return = expand_further(&gear, targets[1], targets[2], drink);
+                drink_t drink1 = combined_return / 100;
+                drink_t drink2 = combined_return % 100;
+                if (combined_return != -1) {
+                    cost = cost_solve(drink, drink1, drink2);
+                    
+                    // discard if not a better sol.
+                    if (res_cost <= cost) {  continue; }
+
+                    output_sol(&init_gear_bkp, init_gear_iter, &init_gear, cnt, drink, drink1, drink2, targets, res_cost, cost, is_full_search);
+                    res_cost = cost;
+                    if (is_full_search == FALSE) { return; }
+                }
+            }
+        }
+
+        init_gear = get_next_gear_using_drink(&init_gear, -1);
+    }
+    if (res_cost == 4) {
+        printf("没能找到合适的解\n");
+    }
+}
+
+seed_t get_next_seed(seed_t current_seed) {
+    current_seed ^= current_seed << 13;
+    current_seed ^= current_seed >> 17;
+    current_seed ^= current_seed << 5;
+    return current_seed;
+}
+
+ability_t get_curr_ability_wo_drink(gear_t* const gear_ptr) {
+    ability_t i;
+    if (gear_ptr == NULL) {
+        ERR_OUT;
+    }
+
+    // if brand has no intention
+    if (gear_ptr->brand > 16 || gear_ptr->brand < 0) {
+        return (gear_ptr->seed % 28) / 2;
+    }
+
+    // brand has an intention
+    // -1 means no need to check for drink in the helper
+    return helper_iterate_abilities(gear_ptr->seed % 35, -1, gear_ptr);
+}
+
+ability_t get_curr_ability_drink_fail(gear_t* gear_ptr, drink_t drink) {
+    int mod;
+
+    // determine "mod"
+    if (get_gear_pos_ability(gear_ptr) == -1) {  // gear's brand has no intention
+        mod = 26;
+    } else if (drink == get_gear_pos_ability(gear_ptr)) {  // drink matches pos ability
+        mod = 25;
+    } else if (drink == get_gear_neg_ability(gear_ptr)) {  // drink matches neg ability
+        mod = 34;
+    } else {  // drink not related to gear's intention
+        mod = 33;
+    }
+
+    return helper_iterate_abilities(gear_ptr->seed % mod, drink, gear_ptr);
+}
+
+gear_t get_next_gear_using_drink(gear_t* const gear_ptr, drink_t drink) {
+    gear_t to_return = *gear_ptr;
+    // advance seed
+    to_return.seed = get_next_seed(gear_ptr->seed);
+
+    // if no drink or invalid drink
+    if (drink == -1 || drink == 14) {
+        to_return.ability = get_curr_ability_wo_drink(&to_return);
+        return to_return;
+    }
+
+    // check if drink gives an hit
+    if ((to_return.seed % 100) < 30) {
+        to_return.ability = drink;
+        return to_return;
+    }
+
+    // advance seed again
+    to_return.seed = get_next_seed(to_return.seed);
+    to_return.ability = get_curr_ability_drink_fail(&to_return, drink);
+    return to_return;
+}
+
+drink_t expand_once(gear_t* const gear_ptr, ability_t target, drink_t prefer) {
+    gear_t next_gear;
+    drink_t drink;
+
+    for (int i = 0; i < 15; i++) {
+        drink = (prefer + i) % 15;
+        next_gear = get_next_gear_using_drink(gear_ptr, drink);
+        if (next_gear.ability == target) {
+            return drink;
+        }
+    }
     return -1;
 }
 
-//计算有饮料的情况下的种子计算
-gear_t ability_solve_drink(gear_t seed, int drink)
-{
-    int ability, seed_;
-    seed.seed = seed_advance(seed.seed);
-    if (drink == -1 || drink == 14)
-    {
-        seed.ability = ability_solve(seed.seed, seed.brand);
-        return seed;
+int expand_further(gear_t* const gear_ptr, ability_t target1,
+                   ability_t target2, drink_t prefer) {
+    drink_t drink1, drink2;
+    gear_t next_gear;
+    for (int i = 0; i < 15; i++) {
+        drink1 = (prefer + i) % 15;
+        next_gear = get_next_gear_using_drink(gear_ptr, drink1);
+        if (next_gear.ability == target1) {
+            if (target2 == -1) {
+                return drink1 * 100 + 14;
+            }
+            drink2 = expand_once(&next_gear, target2, drink1);
+            if (drink2 != -1) {
+                return drink1 * 100 + drink2;
+            }
+        }
     }
-    seed_ = seed.seed % 100;
-    if (seed_ < 30)
-    {
-        seed.ability = drink;
-        return seed;
-    }
-    seed.seed = seed_advance(seed.seed);
-    seed.ability = ability_solve_dd(seed, drink);
-    return seed;
+    return -1;
 }
 
-//查找下一位种子是否符合序列条件
-int search_seed_one(gear_t seed, int target, int drink)
-{
-    int i = drink;
-    gear_t seed_next;
-    while (1)
-    {
-        seed_next = ability_solve_drink(seed, i);
-        if (seed_next.ability == target)
-            return i;
-        i = (i + 1) % 15;
-        if (i == drink)
-        {
-            return -2;
-        }
-    }
-}
-//在所有的种子序列中寻找目标技能序列
-int search_seed(gear_t seed, int target1, int target2, int drink)
-{
-    int i = drink;
-    int j;
-    int k[2] = {0, 0};
-    gear_t seed_next;
-    while (1)
-    {
-        seed_next = ability_solve_drink(seed, i);
-        if (seed_next.ability == target1)
-        {
-            k[0] = i;
-            if (target2 == -1)
-                return k[0] * 100 + 14;
-            k[1] = search_seed_one(seed_next, target2, i);
-            if (k[1] != -2)
-                return k[0] * 100 + k[1];
-        }
-        i = (i + 1) % 15;
-        if (i == drink)
-        {
-            return -2;
-        }
-    }
-}
-
-//计算花费几张饮料券
-int cost_solve(int i, int two)
-{
+// 计算花费几张饮料券
+int cost_solve(drink_t drink, drink_t drink1, drink_t drink2) {
     int cost = 0;
-    int d1, d2;
-    d1 = two / 100;
-    d2 = two % 100;
-    if (i != 14)
+
+    if (drink != 14) {
         cost++;
-    if (i != d1 && d1 != 14)
+    }
+    if (drink != drink1 && drink1 != 14) {
         cost++;
-    if (d1 != d2 && d2 != 14)
+    }
+    if (drink1 != drink2 && drink2 != 14) {
         cost++;
+    }
+
     return cost;
 }
 
-/*
-大概思路就是先用种子衍化没有饮料的情况下种子衍化序列
-从序号0开始衍化，每衍化一个就在这个种子的基础上，喝13种不同的饮料衍化三个接下来的序列
-在这些演化出来的14×3个种子里面寻找与目标技能第一个相同的技能
-如果找到，那就在这个种子的基础上继续寻找喝所有饮料的可能性下的下一个种子与技能
-如果第二个第三个都与目标序列匹配
-则代表找到目标序列
-并且计算输出输出此时花费的饮料券
-之后原始序列继续衍化，同种花费的饮料券只输出路线最少的情况
-*/
-int main()
-{
-    int i, j, k, ii, jj, kk;
-    int two_step;
-    int cost;
+//////////////// helper
 
-    int target_code[3] = {3, 3, 3};
-    gear_t seed_begin, seed_ori, seed_brance;
-
-    //һЩ�������
-    printf("欢迎使用splatoon装备辅助程序\n此程序由本人一人完成,学艺不精,有bug实属正常,请您见谅\n也请您使用生成的方案之前验证一下\n");
-    printf("本程序由消耗饮料券从多到少排序，每种消耗的饮料券只会生成一种结果\n");
-    printf("如有问题请反馈给我\nQQ:1464243589\nB站ID:要历练的风\n");
-    printf("请输入当前装备种子(例子:0x915cfc31):\n");
-    scanf("%x", &seed_begin.seed);
-    printf("请按照下面的装备品牌编号，输入当前装备品牌编号：\n");
-    for (i = 0; i < 20; i++)
-    {
-        printf("%d : %s\n", i, brand_name[i]);
-    }
-    scanf("%d", &seed_begin.brand);
-    while (1)
-    {
-        int res_cost = 4;
-        printf("请按照下面的技能编号，输入三个目标技能序列(例:0 0 0)\n");
-        printf("如果只需要两个技能,要自己打孔，最后一个位置填-1(例:1 2 -1)\n");
-        printf("如果不知道刷什么技能请输入-1 -1 -1 查看刷所有技能的消耗\n");
-        printf("三个数之间请用空格隔开\n");
-        for (i = 0; i < 14; i++)
-        {
-            printf("%d : %s\n", i, ability_order[i]);
+ability_t get_gear_pos_ability(gear_t* const gear_ptr) {
+    return brand_ability[gear_ptr->brand][0];
+}
+ability_t get_gear_neg_ability(gear_t* const gear_ptr) {
+    return brand_ability[gear_ptr->brand][1];
+}
+ability_t helper_iterate_abilities(int seed, drink_t drink, gear_t* const gear_ptr) {
+    ability_t i;
+    for (i = 0; i < NUM_ABILITY; i++) {
+        if (i == drink) {
+            continue;
         }
-
-        //这就是目标序列
-        // target_loop_num的作用是在寻找全技能路线时标志寻找到哪个技能的数字
-        scanf("%d %d %d", &target_code[0], &target_code[1], &target_code[2]);
-        int target_loop_num = -1;
-        if (target_code[0] == -1)
-        {
-            target_loop_num = 0;
-            target_code[0] = target_loop_num;
-            target_code[1] = target_loop_num;
-            target_code[2] = target_loop_num;
+        if (i == get_gear_pos_ability(gear_ptr)) {
+            seed = seed - 10;
+        } else if (i == get_gear_neg_ability(gear_ptr)) {
+            seed = seed - 1;
+        } else {
+            seed = seed - 2;
         }
-        seed_begin.ability = -1;
-        int target_num = 15;
-        int max_num = target_num * 2;
-        seed_ori = seed_begin;
-        gear_t seed_res[max_num];
-         //这是寻找所有技能可能性的程序，分别将目标序列设置成所有技能的0.3与0.2进行运行程序
-        if (target_loop_num != -1)
-        {
-            int find = 0;
-            int drink_num = 0;
-            int drink_all[4];
-            while (1)
-            {
-                drink_num = 0;
-                find = 0;
-                seed_ori = seed_begin;
-                for (j = 0; j < max_num - 5; j++)
-                {
-                    if (find != 0)
-                        break;
-                    for (jj = 0; jj < 3; jj++)
-                    {
-                        if (find != 0)
-                            break;
-                        for (i = 14; i > -1; i--)
-                        {
-                            if (find != 0)
-                                break;
-                            seed_brance = seed_ori;
-                            for (ii = -1; ii < jj; ii++)
-                            {
-                                seed_brance = ability_solve_drink(seed_brance, i); //�ں����ϵ�����½��������ܻ�
-                            }
-                            if (seed_brance.ability == target_code[0])
-                            {
-                                two_step = search_seed(seed_brance, target_code[1], target_code[2], i);
-                                if (two_step != -2 || ((two_step / 100 == two_step % 100) && (two_step / 100 == i)))
-                                {
-                                    find = 1;
-                                    drink_num = 0;
-                                    cost = cost_solve(i, two_step);
-                                    if (i != 14)
-                                    {
-                                        drink_all[drink_num] = i;
-                                        drink_num++;
-                                    }
-                                    if (two_step / 100 != 14 && two_step / 100 != i)
-                                    {
-                                        drink_all[drink_num] = two_step / 100;
-                                        drink_num++;
-                                    }
-                                    if (two_step % 100 != 14 && two_step / 100 != two_step % 100)
-                                    {
-                                        drink_all[drink_num] = two_step % 100;
-                                        drink_num++;
-                                    }
-                                    if (cost != drink_num)
-                                    {
-                                        printf("error drink number\n");
-                                        printf("cost = %d", cost);
-                                        printf("drink_num = %d", drink_num);
-                                        printf("i = %d\n", i);
-                                        printf("two_step = %d\n", two_step);
-                                        printf("drink_all = %d %d %d\n", drink_all[0], drink_all[1], drink_all[2]);
-                                        return 0;
-                                    }
-                                    if (target_loop_num < 14)
-                                    {
-                                        printf("%d: <%s> 0.3最少需要刷 %d 个技能，需要 %d 张饮料券 分别是 \\", target_loop_num, ability_order[target_loop_num], j + jj + 3, drink_num);
-                                        for (ii = 0; ii < drink_num; ii++)
-                                        {
-                                            printf("%s\\", ability_order[drink_all[ii]]);
-                                        }
-                                        printf("\n");
-                                        if (target_loop_num == 13)
-                                            printf("\n\n");
-                                    }
-                                    if (target_loop_num > 13)
-                                    {
-                                        printf("%d: <%s> 0.2最少需要刷 %d 个技能，需要 %d 张饮料券 分别是 \\", target_loop_num - 14, ability_order[target_loop_num - 14], j + jj + 2, drink_num);
-                                        for (ii = 0; ii < drink_num; ii++)
-                                        {
-                                            printf("%s\\", ability_order[drink_all[ii]]);
-                                        }
-                                        printf("\n");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    seed_ori = ability_solve_drink(seed_ori, -1);
-                    seed_res[j] = seed_ori;
-                }
-                target_loop_num = target_loop_num + 1;
-                if (target_loop_num == 28)
-                {
-                    scanf("%d", &i);
-                    return 0;
-                }
-                if (target_loop_num < 14)
-                {
-                    target_code[0] = target_loop_num;
-                    target_code[1] = target_loop_num;
-                    target_code[2] = target_loop_num;
-                }
-                else
-                {
-                    target_code[0] = target_loop_num - 14;
-                    target_code[1] = target_loop_num - 14;
-                    target_code[2] = -1;
-                }
-            }
-        }
-
-        //这是寻找特定的目标序列的程序
-        for (j = 0; j < max_num - 5; j++)
-        {
-            //对每一个原始种子序列都要衍化十四次接下来的可能性，分别衍化三次，寻找是否包含目标序列
-            for (jj = 0; jj < 3; jj++)
-            {
-                for (i = 14; i > -1; i--)
-                {
-                    seed_brance = seed_ori; //进入支脉寻找
-                    for (ii = -1; ii < jj; ii++)
-                    {
-                        seed_brance = ability_solve_drink(seed_brance, i); //在喝饮料的情况下进行种子衍化
-                        seed_res[j + ii + 1] = seed_brance;                //记录可能的路线
-                    }
-                    if (seed_brance.ability == target_code[0])
-                    {                                                                           //匹配了目标序列的第一个技能
-                        two_step = search_seed(seed_brance, target_code[1], target_code[2], i); //寻找后两个技能是否匹配
-                        if (two_step != -2 || ((two_step / 100 == two_step % 100) && (two_step / 100 == i)))
-                        {
-                            cost = cost_solve(i, two_step); //计算方案花费饮料数量
-                            if (res_cost <= cost)           //判断此时花费的饮料数量是否少于之前的方案，如果不少于，则丢弃
-                            {
-                                continue;
-                            }
-                            seed_res[j + jj + 1] = ability_solve_drink(seed_res[j + jj], two_step / 100);
-                            seed_res[j + jj + 2] = ability_solve_drink(seed_res[j + jj + 1], two_step % 100);
-                            if (res_cost == 4)
-                            {
-                                printf("这是  <<最快>>  的方案，需要消耗 %d 张饮料券\n", cost);
-                            }
-                            else
-                            {
-                                printf("此方案需要消耗 %d 张饮料券\n", cost);
-                            }
-                            res_cost = cost;
-                            for (ii = 0; ii < j; ii++)
-                            {
-                                printf("  第 %d 个技能产生 %s   此时的种子为  0x%x\n", ii + 1, ability_order[seed_res[ii].ability], seed_res[ii].seed);
-                            }
-                            if (i != 14)
-                                printf("<<<喝 %s 饮料>>>\n", ability_order[i]);
-                            for (ii = 0; ii < jj; ii++)
-                            {
-                                printf("  第 %d 个技能产生 %s   此时的种子为  0x%x\n", j + ii + 1, ability_order[seed_res[j + ii].ability], seed_res[j + ii].seed);
-                            }
-                            printf("<<0.3的洗衣服>> <<0.2的按需打孔>> ，接下来的技能就是目标序列\n");
-                            printf("  第 %d 个技能产生 %s   此时的种子为  0x%x\n", j + jj + 1, ability_order[seed_res[j + jj].ability], seed_res[j + ii].seed);
-                            if (two_step / 100 != i)
-                            {
-                                if (two_step / 100 == 14)
-                                    printf("<<<取消>>>饮料效果\n");
-                                else
-                                    printf("<<<喝 %s 饮料>>>\n", ability_order[two_step / 100]);
-                            }
-                            printf("  第 %d 个技能产生 %s   此时的种子为  0x%x\n", j + jj + 2, ability_order[seed_res[j + jj + 1].ability], seed_res[j + jj + 1].seed);
-                            if (target_code[2] != -1)
-                            {
-                                if (two_step % 100 != two_step / 100)
-                                {
-                                    if (two_step % 100 == 14)
-                                        printf("<<<取消>>>饮料效果\n");
-                                    else
-                                        printf("<<<喝 %s 饮料>>>\n", ability_order[two_step % 100]);
-                                }
-                                printf("  第 %d 个技能产生 %s   此时的种子为  0x%x\n", j + jj + 3, ability_order[seed_res[j + ii + 2].ability], seed_res[j + jj + 2].seed);
-                            }
-                            printf("\n\n\n");
-                        }
-                    }
-                }
-            }
-            // printf("0x%x \n", seed_ori.seed);
-            seed_ori = ability_solve_drink(seed_ori, -1);
-            seed_res[j] = seed_ori;
-        }
-        if (res_cost == 4)
-        {
-            printf("Sorry,�Ҳ���Ŀ�����");
+        if (seed < 0) {
+            return i;
         }
     }
+    ERR_OUT;
+}
+
+int valid_targets(ability_t* targets) {
+    for (int i = 0; i < 3; i++) {
+        if (targets[i] < -1 || targets[i] >= NUM_ABILITY) {
+            printf("%d 为非正常输入\n", targets[i]);
+            return FALSE;
+        }
+    }
+    if (targets[2] != -1) {
+        if (targets[0] == -1 || targets[1] == -1) {
+            printf("-1 需要在最后面\n");
+            return FALSE;
+        }
+    } else {
+        if (targets[1] != -1 && targets[0] == -1) {
+            printf("-1 需要在最后面\n");
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
+void output_sol(gear_t* const bkp_ptr, int init_gear_iter,
+                gear_t* const init_ptr, int cnt,
+                drink_t drink, drink_t drink1, drink_t drink2,
+                ability_t* targets, int res_cost, int cost, int verbose) {
+    if (verbose == FALSE) {
+        if (targets[2] == -1) { 
+            printf("0.2 最少需要刷 %d 个技能，需要 ", init_gear_iter + cnt + 2);
+        } else { 
+            printf("0.3 最少需要刷 %d 个技能，需要 ", init_gear_iter + cnt + 3);
+        }
+        printf("%d 张饮料券 分别是 |", cost);
+        if (drink != 14) {
+            printf("%s|", ability_order[drink]);
+        }
+        if (drink != drink1 && drink1 != 14) {
+            printf("%s|", ability_order[drink1]);
+        }
+        if (targets[2] != -1 && drink1 != drink2 && drink2 != 14) {
+            printf("%s|", ability_order[drink2]);
+        }
+        printf("\n");
+        return;
+    }
+    if (res_cost == 4) {
+        printf("这是  <<最快>>  的方案，需要消耗 %d 张饮料券\n", cost);
+    } else {
+        printf("此方案需要消耗 %d 张饮料券\n", cost);
+    }
+    if (drink != 14) {
+        printf("<<<喝 %s 饮料>>>\n", ability_order[drink]);
+    }
+    gear_t gear_temp = *bkp_ptr;
+    int output_idx = 1;
+    for (int temp = 0; temp < init_gear_iter; temp++) {
+        printf("  第 %d 个技能产生 %s 此时的种子为 0x%x\n", output_idx, ability_order[gear_temp.ability], gear_temp.seed);
+        output_idx++;
+    }
+    gear_temp = *init_ptr;
+    for (int temp = 0; temp < cnt; temp++) {
+        gear_temp = get_next_gear_using_drink(&gear_temp, drink);
+        printf("  第 %d 个技能产生 %s 此时的种子为 0x%x\n", output_idx, ability_order[gear_temp.ability], gear_temp.seed);
+        output_idx++;
+    }
+    gear_t gear = get_next_gear_using_drink(&gear_temp, drink);
+    printf("<<0.3的洗衣服>> <<0.2的按需打孔>> ，接下来的技能就是目标序列\n");
+    printf("  第 %d 个技能产生 %s 此时的种子为 0x%x\n", output_idx++, ability_order[gear.ability], gear.seed);
+    if (drink != drink1) {
+        if (drink1 == 14) {
+            printf("<<<取消>>>饮料效果\n");
+        } else {
+            printf("<<<喝 %s 饮料>>>\n", ability_order[drink1]);
+        }
+    }
+    gear_t gear1 = get_next_gear_using_drink(&gear, drink1);
+    gear_t gear2 = get_next_gear_using_drink(&gear1, drink2);
+    printf("  第 %d 个技能产生 %s 此时的种子为  0x%x\n", output_idx++, ability_order[gear1.ability], gear1.seed);
+    if (targets[2] != -1) {
+        if (drink1 != drink2) {
+            if (drink2 == 14) {
+                printf("<<<取消>>>饮料效果\n");
+            } else {
+                printf("<<<喝 %s 饮料>>>\n", ability_order[drink2]);
+            }
+        }
+        printf("  第 %d 个技能产生 %s 此时的种子为  0x%x\n", output_idx++, ability_order[gear2.ability], gear2.seed);
+    }
+    printf("\n\n\n");
 }

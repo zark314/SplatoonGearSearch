@@ -1,11 +1,14 @@
-TARGET=splatoon_gear_search
 CC=clang
+TARGET=splatoon_gear_search
 
-all:
-	${CC} ${TARGET}.c -O3 -o ${TARGET}
+SOURCES=splatoon_gear_search.c constants.c
+
+all: ${SOURCES}
+	${CC} ${SOURCES} -O3 -o ${TARGET}
 
 run:
 	./${TARGET}
 
 clean:
 	rm ./${TARGET}
+	rm -f test
