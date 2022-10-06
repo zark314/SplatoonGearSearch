@@ -76,7 +76,7 @@ void find_sol(gear_t init_gear_bkp, ability_t* targets, int is_full_search) {
         init_gear = get_next_gear_using_drink(&init_gear, -1);
     }
     if (res_cost == 4) {
-        printf("æ²¡èƒ½æ‰¾åˆ°åˆé€‚çš„è§£\n");
+        printf("Ã»ÄÜÕÒµ½ºÏÊÊµÄ½â\n");
     }
 }
 
@@ -177,7 +177,7 @@ int expand_further(gear_t* const gear_ptr, ability_t target1,
     return -1;
 }
 
-// è®¡ç®—èŠ±è´¹å‡ å¼ é¥®æ–™åˆ¸
+// ¼ÆËã»¨·Ñ¼¸ÕÅÒûÁÏÈ¯
 int cost_solve(drink_t drink, drink_t drink1, drink_t drink2) {
     int cost = 0;
 
@@ -225,18 +225,18 @@ ability_t helper_iterate_abilities(int seed, drink_t drink, gear_t* const gear_p
 int valid_targets(ability_t* targets) {
     for (int i = 0; i < 3; i++) {
         if (targets[i] < -1 || targets[i] >= NUM_ABILITY) {
-            printf("%d ä¸ºéæ­£å¸¸è¾“å…¥\n", targets[i]);
+            printf("%d Îª·ÇÕı³£ÊäÈë\n", targets[i]);
             return FALSE;
         }
     }
     if (targets[2] != -1) {
         if (targets[0] == -1 || targets[1] == -1) {
-            printf("-1 éœ€è¦åœ¨æœ€åé¢\n");
+            printf("-1 ĞèÒªÔÚ×îºóÃæ\n");
             return FALSE;
         }
     } else {
         if (targets[1] != -1 && targets[0] == -1) {
-            printf("-1 éœ€è¦åœ¨æœ€åé¢\n");
+            printf("-1 ĞèÒªÔÚ×îºóÃæ\n");
             return FALSE;
         }
     }
@@ -249,11 +249,11 @@ void output_sol(gear_t* const bkp_ptr, int init_gear_iter,
                 ability_t* targets, int res_cost, int cost, int verbose) {
     if (verbose == FALSE) {
         if (targets[2] == -1) { 
-            printf("0.2 æœ€å°‘éœ€è¦åˆ· %d ä¸ªæŠ€èƒ½ï¼Œéœ€è¦ ", init_gear_iter + cnt + 2);
+            printf("0.2 ×îÉÙĞèÒªË¢ %d ¸ö¼¼ÄÜ£¬ĞèÒª ", init_gear_iter + cnt + 2);
         } else { 
-            printf("0.3 æœ€å°‘éœ€è¦åˆ· %d ä¸ªæŠ€èƒ½ï¼Œéœ€è¦ ", init_gear_iter + cnt + 3);
+            printf("0.3 ×îÉÙĞèÒªË¢ %d ¸ö¼¼ÄÜ£¬ĞèÒª ", init_gear_iter + cnt + 3);
         }
-        printf("%d å¼ é¥®æ–™åˆ¸ åˆ†åˆ«æ˜¯ |", cost);
+        printf("%d ÕÅÒûÁÏÈ¯ ·Ö±ğÊÇ |", cost);
         if (drink != 14) {
             printf("%s|", ability_order[drink]);
         }
@@ -267,47 +267,49 @@ void output_sol(gear_t* const bkp_ptr, int init_gear_iter,
         return;
     }
     if (res_cost == 4) {
-        printf("è¿™æ˜¯  <<æœ€å¿«>>  çš„æ–¹æ¡ˆï¼Œéœ€è¦æ¶ˆè€— %d å¼ é¥®æ–™åˆ¸\n", cost);
+        printf("ÕâÊÇ  <<×î¿ì>>  µÄ·½°¸£¬ĞèÒªÏûºÄ %d ÕÅÒûÁÏÈ¯\n", cost);
     } else {
-        printf("æ­¤æ–¹æ¡ˆéœ€è¦æ¶ˆè€— %d å¼ é¥®æ–™åˆ¸\n", cost);
+        printf("´Ë·½°¸ĞèÒªÏûºÄ %d ÕÅÒûÁÏÈ¯\n", cost);
     }
-    if (drink != 14) {
-        printf("<<<å– %s é¥®æ–™>>>\n", ability_order[drink]);
-    }
+    
     gear_t gear_temp = *bkp_ptr;
     int output_idx = 1;
     for (int temp = 0; temp < init_gear_iter; temp++) {
-        printf("  ç¬¬ %d ä¸ªæŠ€èƒ½äº§ç”Ÿ %s æ­¤æ—¶çš„ç§å­ä¸º 0x%x\n", output_idx, ability_order[gear_temp.ability], gear_temp.seed);
+        gear_temp = get_next_gear_using_drink(&gear_temp, -1);
+        printf("  µÚ %d ¸ö¼¼ÄÜ²úÉú %s ´ËÊ±µÄÖÖ×ÓÎª 0x%x\n", output_idx, ability_order[gear_temp.ability], gear_temp.seed);
         output_idx++;
+    }
+    if (drink != 14) {
+        printf("<<<ºÈ %s ÒûÁÏ>>>\n", ability_order[drink]);
     }
     gear_temp = *init_ptr;
     for (int temp = 0; temp < cnt; temp++) {
         gear_temp = get_next_gear_using_drink(&gear_temp, drink);
-        printf("  ç¬¬ %d ä¸ªæŠ€èƒ½äº§ç”Ÿ %s æ­¤æ—¶çš„ç§å­ä¸º 0x%x\n", output_idx, ability_order[gear_temp.ability], gear_temp.seed);
+        printf("  µÚ %d ¸ö¼¼ÄÜ²úÉú %s ´ËÊ±µÄÖÖ×ÓÎª 0x%x\n", output_idx, ability_order[gear_temp.ability], gear_temp.seed);
         output_idx++;
     }
     gear_t gear = get_next_gear_using_drink(&gear_temp, drink);
-    printf("<<0.3çš„æ´—è¡£æœ>> <<0.2çš„æŒ‰éœ€æ‰“å­”>> ï¼Œæ¥ä¸‹æ¥çš„æŠ€èƒ½å°±æ˜¯ç›®æ ‡åºåˆ—\n");
-    printf("  ç¬¬ %d ä¸ªæŠ€èƒ½äº§ç”Ÿ %s æ­¤æ—¶çš„ç§å­ä¸º 0x%x\n", output_idx++, ability_order[gear.ability], gear.seed);
+    printf("<<0.3µÄÏ´ÒÂ·ş>> <<0.2µÄ°´Ğè´ò¿×>> £¬½ÓÏÂÀ´µÄ¼¼ÄÜ¾ÍÊÇÄ¿±êĞòÁĞ\n");
+    printf("  µÚ %d ¸ö¼¼ÄÜ²úÉú %s ´ËÊ±µÄÖÖ×ÓÎª 0x%x\n", output_idx++, ability_order[gear.ability], gear.seed);
     if (drink != drink1) {
         if (drink1 == 14) {
-            printf("<<<å–æ¶ˆ>>>é¥®æ–™æ•ˆæœ\n");
+            printf("<<<È¡Ïû>>>ÒûÁÏĞ§¹û\n");
         } else {
-            printf("<<<å– %s é¥®æ–™>>>\n", ability_order[drink1]);
+            printf("<<<ºÈ %s ÒûÁÏ>>>\n", ability_order[drink1]);
         }
     }
     gear_t gear1 = get_next_gear_using_drink(&gear, drink1);
     gear_t gear2 = get_next_gear_using_drink(&gear1, drink2);
-    printf("  ç¬¬ %d ä¸ªæŠ€èƒ½äº§ç”Ÿ %s æ­¤æ—¶çš„ç§å­ä¸º  0x%x\n", output_idx++, ability_order[gear1.ability], gear1.seed);
+    printf("  µÚ %d ¸ö¼¼ÄÜ²úÉú %s ´ËÊ±µÄÖÖ×ÓÎª  0x%x\n", output_idx++, ability_order[gear1.ability], gear1.seed);
     if (targets[2] != -1) {
         if (drink1 != drink2) {
             if (drink2 == 14) {
-                printf("<<<å–æ¶ˆ>>>é¥®æ–™æ•ˆæœ\n");
+                printf("<<<È¡Ïû>>>ÒûÁÏĞ§¹û\n");
             } else {
-                printf("<<<å– %s é¥®æ–™>>>\n", ability_order[drink2]);
+                printf("<<<ºÈ %s ÒûÁÏ>>>\n", ability_order[drink2]);
             }
         }
-        printf("  ç¬¬ %d ä¸ªæŠ€èƒ½äº§ç”Ÿ %s æ­¤æ—¶çš„ç§å­ä¸º  0x%x\n", output_idx++, ability_order[gear2.ability], gear2.seed);
+        printf("  µÚ %d ¸ö¼¼ÄÜ²úÉú %s ´ËÊ±µÄÖÖ×ÓÎª  0x%x\n", output_idx++, ability_order[gear2.ability], gear2.seed);
     }
     printf("\n\n\n");
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#define MAX_NAME_LEN 70
+#define MAX_NAME_LEN 400
 #define NUM_ABILITY 14
 #define NUM_BRAND 20
 #define TRUE 1

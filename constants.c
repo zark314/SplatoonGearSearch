@@ -1,43 +1,43 @@
 #include <stdio.h>
 #include "utils.h"
 
-const char ability_order[14][70] = {
-    "ä¸»çœ",
-    "å‰¯çœ",
-    "å¢¨å›ž",
-    "èµ°é€Ÿ",
-    "æ¸¸é€Ÿ",
-    "å¤§æ‹›å‡é‡",
-    "spæ­»äº¡å‡è½»",
-    "å¤§æ‹›å¢žå¼º",
-    "å¿«é€Ÿå¤æ´»",
-    "è¶…çº§è·³",
-    "å‰¯å¼º",
-    "å®‰å…¨éž‹",
-    "é˜²çˆ†",
-    "è¡ŒåŠ¨å¼ºåŒ–",
+const char ability_order[NUM_ABILITY][MAX_NAME_LEN] = {
+    "Ö÷Ê¡ / ÌáÉýÄ«Ö­Ð§ÂÊ(Ö÷ÒªÎäÆ÷)",
+    "¸±Ê¡ / ÌáÉýÄ«Ö­Ð§ÂÊ(´ÎÒªÎäÆ÷)",
+    "Ä«»Ø / ÌáÉýÄ«Ö­²ÛµÄ»Ø¸´ËÙ¶È",
+    "×ßËÙ / ÌáÉýÈËÀà×´Ì¬ÒÆ¶¯ËÙ¶È",
+    "ÓÎËÙ / ÌáÉýöÏÓãÓÎ¶¯ËÙ¶È",
+    "´óÕÐ¼õÁ¿ / ÌáÉýÌØÊâÎäÆ÷Ôö¼ÓÁ¿",
+    "spËÀÍö¼õÇá / ½µµÍÌØÊâÎäÆ÷¼õÉÙÁ¿",
+    "´óÕÐÔöÇ¿ / ÌáÉýÌØÊâÎäÆ÷µÄÐÔÄÜ",
+    "¿ìËÙ¸´»î / Ëõ¶Ì¸´»îÊ±¼ä",
+    "³¬¼¶Ìø / Ëõ¶Ì³¬¼¶ÌøÔ¾µÄÊ±¼ä",
+    "¸±Ç¿ / ÌáÉý´ÎÒªÎäÆ÷µÄÐÔÄÜ",
+    "°²È«Ð¬ / ¼õÇá¶ÔÊÖÄ«Ö­Ó°Ïì",
+    "·À±¬ / ¼õÇá´ÎÒªÎäÆ÷Ó°Ïì",
+    "ÐÐ¶¯Ç¿»¯",
 };
 
-const char brand_name[20][70] = {
-    "æˆ˜æ–—é±¿é±¼",
-    "é’¢é“å…ˆé”‹",
-    "æµ·æœˆ",
-    "ç½—è‚¯è´æ ¼",
-    "æ³½é…·",
-    "é”»å“",
-    "æš–æµ",
-    "å¸†ç«‹",
-    "å¯ºé—¨",
-    "æ—¶é›¨",
-    "è‰¾æ´›çœ¼",
-    "æš‡å¤",
-    "æ— æ³•æ— å¤©",
-    "é±¿çš‡",
-    "å‰‘å°–é±¿",
-    "æ•£å¯¿å¸",
-    "ä¸ƒè½®",
-    "ç†Šå…ˆç”Ÿå•†ä¼š",
-    "é±¼å¹²åˆ¶é€ ",
+const char brand_name[NUM_BRAND][MAX_NAME_LEN] = {
+    "Õ½¶·öÏÓã / SquidForce",
+    "¸ÖÌúÏÈ·æ / Zink",
+    "º£ÔÂ / Krak-On",
+    "ÂÞ¿Ï±´¸ñ / Rockenberg",
+    "Ôó¿á / Zekko",
+    "¶ÍÆ· / Forge",
+    "Å¯Á÷ / Firefin",
+    "·«Á¢ / Skalop",
+    "ËÂÃÅ / Splash Mob",
+    "Ê±Óê / Barazushi",
+    "°¬ÂåÑÛ / Tentatek",
+    "Ï¾¹Å / Takoroka",
+    "ÎÞ·¨ÎÞÌì / Annaki",
+    "öÏ»Ê / Enperry",
+    "½£¼âöÏ / Toni Kensa",
+    "É¢ÊÙË¾ / Barazushi",
+    "ÆßÂÖ / Emberz",
+    "ÐÜÏÈÉúÉÌ»á / Grizzco",
+    "Óã¸ÉÖÆÔì / Cuttlegear",
     "amiibo",
 };
 const ability_t brand_ability[20][2] = {
@@ -64,25 +64,25 @@ const ability_t brand_ability[20][2] = {
 };
 
 void print_const_message1() {
-    printf("æ¬¢è¿Žä½¿ç”¨splatoonè£…å¤‡è¾…åŠ©ç¨‹åº\næ­¤ç¨‹åºç”±æœ¬äººä¸€äººå®Œæˆ,å­¦è‰ºä¸ç²¾,æœ‰bugå®žå±žæ­£å¸¸,è¯·æ‚¨è§è°…\nä¹Ÿè¯·æ‚¨ä½¿ç”¨ç”Ÿæˆçš„æ–¹æ¡ˆä¹‹å‰éªŒè¯ä¸€ä¸‹\n");
-    printf("æœ¬ç¨‹åºç”±æ¶ˆè€—é¥®æ–™åˆ¸ä»Žå¤šåˆ°å°‘æŽ’åºï¼Œæ¯ç§æ¶ˆè€—çš„é¥®æ–™åˆ¸åªä¼šç”Ÿæˆä¸€ç§ç»“æžœ\n");
-    printf("å¦‚æœ‰é—®é¢˜è¯·åé¦ˆç»™æˆ‘\nQQ:1464243589\nBç«™ID:è¦åŽ†ç»ƒçš„é£Ž\n");
-    printf("è¯·è¾“å…¥å½“å‰è£…å¤‡ç§å­(ä¾‹å­:0x915cfc31):\n");
+    printf("»¶Ó­Ê¹ÓÃsplatoon×°±¸¸¨Öú³ÌÐò\n´Ë³ÌÐòÓÉ±¾ÈËÒ»ÈËÍê³É,Ñ§ÒÕ²»¾«,ÓÐbugÊµÊôÕý³£,ÇëÄú¼ûÁÂ\nÒ²ÇëÄúÊ¹ÓÃÉú³ÉµÄ·½°¸Ö®Ç°ÑéÖ¤Ò»ÏÂ\n");
+    printf("±¾³ÌÐòÓÉÏûºÄÒûÁÏÈ¯´Ó¶àµ½ÉÙÅÅÐò£¬Ã¿ÖÖÏûºÄµÄÒûÁÏÈ¯Ö»»áÉú³ÉÒ»ÖÖ½á¹û\n");
+    printf("ÈçÓÐÎÊÌâÇë·´À¡¸øÎÒ\nQQ:1464243589\nBÕ¾ID:ÒªÀúÁ·µÄ·ç\n");
+    printf("ÇëÊäÈëµ±Ç°×°±¸ÖÖ×Ó(Àý×Ó:0x915cfc31):\n");
 }
 
 void print_const_message2() {
-    printf("è¯·æŒ‰ç…§ä¸‹é¢çš„è£…å¤‡å“ç‰Œç¼–å·ï¼Œè¾“å…¥å½“å‰è£…å¤‡å“ç‰Œç¼–å·ï¼š\n");
+    printf("Çë°´ÕÕÏÂÃæµÄ×°±¸Æ·ÅÆ±àºÅ£¬ÊäÈëµ±Ç°×°±¸Æ·ÅÆ±àºÅ£º\n");
     for (brand_t i = 0; i < NUM_BRAND; i++) {
         printf("%d : %s\n", i, brand_name[i]);
     }
 }
 
 void print_const_message3() {
-    printf("================== å‡†å¤‡å¼€å§‹æœç´¢:\n");
-    printf("è¯·æŒ‰ç…§ä¸‹é¢çš„æŠ€èƒ½ç¼–å·ï¼Œè¾“å…¥ä¸‰ä¸ªç›®æ ‡æŠ€èƒ½åºåˆ—(ä¾‹:0 0 0)\n");
-    printf("å¦‚æžœåªéœ€è¦ä¸¤ä¸ªæŠ€èƒ½,è¦è‡ªå·±æ‰“å­”ï¼Œæœ€åŽä¸€ä¸ªä½ç½®å¡«-1(ä¾‹:1 2 -1)\n");
-    printf("å¦‚æžœä¸çŸ¥é“åˆ·ä»€ä¹ˆæŠ€èƒ½è¯·è¾“å…¥-1 -1 -1 æŸ¥çœ‹åˆ·æ‰€æœ‰æŠ€èƒ½çš„æ¶ˆè€—\n");
-    printf("ä¸‰ä¸ªæ•°ä¹‹é—´è¯·ç”¨ç©ºæ ¼éš”å¼€\n");
+    printf("================== ×¼±¸¿ªÊ¼ËÑË÷:\n");
+    printf("Çë°´ÕÕÏÂÃæµÄ¼¼ÄÜ±àºÅ£¬ÊäÈëÈý¸öÄ¿±ê¼¼ÄÜÐòÁÐ(Àý:0 0 0)\n");
+    printf("Èç¹ûÖ»ÐèÒªÁ½¸ö¼¼ÄÜ,Òª×Ô¼º´ò¿×£¬×îºóÒ»¸öÎ»ÖÃÌî-1(Àý:1 2 -1)\n");
+    printf("Èç¹û²»ÖªµÀË¢Ê²Ã´¼¼ÄÜÇëÊäÈë-1 -1 -1 ²é¿´Ë¢ËùÓÐ¼¼ÄÜµÄÏûºÄ\n");
+    printf("Èý¸öÊýÖ®¼äÇëÓÃ¿Õ¸ñ¸ô¿ª\n");
     for (brand_t i = 0; i < NUM_ABILITY; i++) {
         printf("%d : %s\n", i, ability_order[i]);
     }

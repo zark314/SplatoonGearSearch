@@ -1,4 +1,4 @@
-CC=clang
+CC=gcc
 TARGET=splatoon_gear_search
 
 SOURCES=splatoon_gear_search.c constants.c
